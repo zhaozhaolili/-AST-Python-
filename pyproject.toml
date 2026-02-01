@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyanalyzer"
+version = "1.0.0"
+description = "基于AST与符号执行的Python代码缺陷检测工具"
+readme = "README.md"
+authors = [
+    {name = "开源软件基础课程小组", email = "example@university.edu"}
+]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "astunparse>=1.6.3",
+    "libcst>=0.4.9",
+    "z3-solver>=4.12.2.0",
+    "click>=8.1.0",
+    "pyyaml>=6.0",
+    "matplotlib>=3.5.0",
+    "pandas>=1.5.0",
+    "networkx>=2.8",
+    "graphviz>=0.20.0",
+    "jinja2>=3.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "coverage>=6.0.0",
+    "black>=22.0.0",
+    "flake8>=4.0.0",
+    "mypy>=0.900",
+    "pytest-cov>=4.0.0",
+]
+test = [
+    "pytest>=7.0.0",
+    "coverage>=6.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/pyanalyzer"
+BugTracker = "https://github.com/yourusername/pyanalyzer/issues"
+Documentation = "https://github.com/yourusername/pyanalyzer#readme"
+
+[project.scripts]
+pyanalyzer = "pyanalyzer.cli:cli"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true

@@ -1,0 +1,72 @@
+# PyAnalyzer配置文件
+
+# 启用哪些缺陷检测模式
+patterns:
+  enabled:
+    - "null_dereference"
+    - "resource_leak"
+    - "unused_variable"
+    - "unused_import"
+    - "division_by_zero"
+    - "hardcoded_password"
+    - "sql_injection"
+    - "potential_loop_infinite"
+    - "missing_type_hints"
+    - "long_function"
+    - "high_complexity"
+  
+  # 阈值配置
+  thresholds:
+    function_length: 30  # 超过30行警告
+    cyclomatic_complexity: 8  # 圈复杂度超过8警告
+    nesting_depth: 4  # 嵌套深度超过4警告
+
+# 符号执行配置
+symbolic_execution:
+  enabled: true
+  max_depth: 8
+  timeout: 20  # 超时时间（秒）
+
+# 报告配置
+reporting:
+  format: "html"  # html, json, console
+  output_dir: "./reports"
+  include_graphs: true
+  severity_filter: "medium"  # 只显示中等及以上严重性
+  generate_summary: true
+
+# 忽略规则
+ignore:
+  # 忽略的文件模式
+  files:
+    - "*/test_*.py"
+    - "*/__pycache__/*"
+    - "*/venv/*"
+    - "*/env/*"
+    - "*.pyc"
+  
+  # 忽略的代码模式（TODO、FIXME等）
+  patterns:
+    - "TODO:"
+    - "FIXME:"
+    - "HACK:"
+    - "XXX:"
+  
+  # 忽略的导入
+  imports:
+    - "typing"
+    - "os"
+    - "sys"
+
+# 项目特定配置
+project:
+  name: "示例项目"
+  version: "1.0.0"
+  description: "PyAnalyzer示例项目"
+  
+# 分析选项
+analysis:
+  skip_type_checking: false
+  skip_unused_imports: false
+  max_file_size: 1048576  # 最大文件大小（1MB）
+  follow_imports: true
