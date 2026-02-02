@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-02-01T21:44:16.825838",
+  "total_defects": 3,
+  "severity_summary": {
+    "medium": 3
+  },
+  "top_patterns": {
+    "resource_leak": 2,
+    "potential_loop_infinite": 1
+  },
+  "files_with_defects": 1,
+  "total_files_analyzed": 1,
+  "key_metrics": {
+    "total_lines": 203,
+    "total_functions": 32,
+    "avg_complexity": 0
+  },
+  "recommendations": [
+    "确保所有资源（文件、连接）都使用with语句或正确关闭"
+  ]
+}

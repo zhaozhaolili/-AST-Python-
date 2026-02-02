@@ -1,0 +1,123 @@
+{
+  "timestamp": "2026-02-01 21:42:49",
+  "total_defects": 3,
+  "defects_by_severity": {
+    "medium": 3
+  },
+  "defects_by_pattern": {
+    "potential_loop_infinite": 1,
+    "resource_leak": 2
+  },
+  "defects": [
+    {
+      "pattern": "potential_loop_infinite",
+      "description": "可能无限循环",
+      "severity": "medium",
+      "line": 68,
+      "file": "pyanalyzer\\examples\\example_project\\vulnerable_code.py",
+      "suggestion": "确保循环有终止条件或添加超时机制"
+    },
+    {
+      "pattern": "resource_leak",
+      "description": "可能未正确关闭open打开的资源",
+      "severity": "medium",
+      "line": 23,
+      "file": "pyanalyzer\\examples\\example_project\\vulnerable_code.py",
+      "suggestion": "使用with语句或确保调用close()方法"
+    },
+    {
+      "pattern": "resource_leak",
+      "description": "可能未正确关闭connect打开的资源",
+      "severity": "medium",
+      "line": 42,
+      "file": "pyanalyzer\\examples\\example_project\\vulnerable_code.py",
+      "suggestion": "使用with语句或确保调用close()方法"
+    }
+  ],
+  "metrics": [
+    {
+      "total_lines": 203,
+      "function_count": 32,
+      "class_count": 1,
+      "avg_function_length": 3.96875,
+      "avg_cyclomatic_complexity": 1.375,
+      "import_count": 3,
+      "variable_count": 14,
+      "file_path": "pyanalyzer\\examples\\example_project\\vulnerable_code.py"
+    }
+  ],
+  "config": {
+    "patterns": {
+      "enabled": [
+        "null_dereference",
+        "resource_leak",
+        "unused_variable",
+        "unused_import",
+        "division_by_zero",
+        "hardcoded_password",
+        "sql_injection",
+        "potential_loop_infinite",
+        "missing_type_hints",
+        "long_function",
+        "high_complexity"
+      ],
+      "thresholds": {
+        "function_length": 30,
+        "cyclomatic_complexity": 8,
+        "nesting_depth": 4
+      }
+    },
+    "symbolic_execution": {
+      "enabled": true,
+      "max_depth": 8,
+      "timeout": 20
+    },
+    "reporting": {
+      "format": "html",
+      "output_dir": "./reports",
+      "include_graphs": true,
+      "severity_filter": "medium",
+      "generate_summary": true
+    },
+    "ignore": {
+      "files": [
+        "*/test_*.py",
+        "*/__pycache__/*",
+        "*/venv/*",
+        "*/env/*",
+        "*.pyc",
+        "__pycache__",
+        ".git",
+        ".vscode",
+        ".idea",
+        "venv",
+        "env",
+        "node_modules",
+        "dist",
+        "build"
+      ],
+      "patterns": [
+        "TODO:",
+        "FIXME:",
+        "HACK:",
+        "XXX:"
+      ],
+      "imports": [
+        "typing",
+        "os",
+        "sys"
+      ]
+    },
+    "project": {
+      "name": "示例项目",
+      "version": "1.0.0",
+      "description": "PyAnalyzer示例项目"
+    },
+    "analysis": {
+      "skip_type_checking": false,
+      "skip_unused_imports": false,
+      "max_file_size": 1048576,
+      "follow_imports": true
+    }
+  }
+}

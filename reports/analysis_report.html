@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyAnalyzer - Python代码分析报告</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+        
+        .timestamp {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f8f9fa;
+            font-size: 1.4em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .severity-critical { color: #e74c3c; }
+        .severity-high { color: #e67e22; }
+        .severity-medium { color: #f1c40f; }
+        .severity-low { color: #3498db; }
+        
+        .defects-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .defects-table th {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .defects-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .defects-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .severity-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .badge-critical { background: #e74c3c; color: white; }
+        .badge-high { background: #e67e22; color: white; }
+        .badge-medium { background: #f1c40f; color: white; }
+        .badge-low { background: #3498db; color: white; }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .metric-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .metric-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            font-size: 1.5em;
+            color: #3498db;
+        }
+        
+        .summary {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #1abc9c, #16a085);
+            color: white;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .summary h2 {
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+        
+        .recommendations {
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .recommendations ul {
+            padding-left: 20px;
+        }
+        
+        .recommendations li {
+            margin-bottom: 10px;
+            padding-left: 10px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            margin-top: 30px;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .defects-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 PyAnalyzer 代码分析报告</h1>
+            <p class="subtitle">基于AST与符号执行的Python代码缺陷检测</p>
+            <div class="timestamp">生成时间: 2026-02-01 21:42:49</div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="card">
+                <h2>📊 总体统计</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value severity-critical">0</div>
+                        <div class="stat-label">严重缺陷</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value severity-high">0</div>
+                        <div class="stat-label">高危缺陷</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value severity-medium">3</div>
+                        <div class="stat-label">中危缺陷</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value severity-low">0</div>
+                        <div class="stat-label">低危缺陷</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>📈 缺陷分布</h2>
+                <div class="chart-container">
+                    <canvas id="defectsChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>⚙️ 分析配置</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-name">分析文件数</div>
+                        <div class="metric-value">1</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-name">启用模式数</div>
+                        <div class="metric-value">11</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-name">符号执行</div>
+                        <div class="metric-value">启用</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>🔎 缺陷详情</h2>
+            
+        <table class="defects-table">
+            <thead>
+                <tr>
+                    <th>严重程度</th>
+                    <th>模式</th>
+                    <th>描述</th>
+                    <th>位置</th>
+                    <th>建议</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                <tr class="defect-row" data-defect-id="0">
+                    <td><span class="severity-badge badge-medium">MEDIUM</span></td>
+                    <td><strong>potential_loop_infinite</strong></td>
+                    <td>可能无限循环</td>
+                    <td>vulnerable_code.py:68</td>
+                    <td>确保循环有终止条件或添加超时机制</td>
+                </tr>
+            
+                <tr class="defect-row" data-defect-id="1">
+                    <td><span class="severity-badge badge-medium">MEDIUM</span></td>
+                    <td><strong>resource_leak</strong></td>
+                    <td>可能未正确关闭open打开的资源</td>
+                    <td>vulnerable_code.py:23</td>
+                    <td>使用with语句或确保调用close()方法</td>
+                </tr>
+            
+                <tr class="defect-row" data-defect-id="2">
+                    <td><span class="severity-badge badge-medium">MEDIUM</span></td>
+                    <td><strong>resource_leak</strong></td>
+                    <td>可能未正确关闭connect打开的资源</td>
+                    <td>vulnerable_code.py:42</td>
+                    <td>使用with语句或确保调用close()方法</td>
+                </tr>
+            
+            </tbody>
+        </table>
+        
+        </div>
+        
+        
+        <div class="card">
+            <h2>📏 代码指标</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-name">总代码行数</div>
+                    <div class="metric-value">203</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-name">函数数量</div>
+                    <div class="metric-value">32</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-name">类数量</div>
+                    <div class="metric-value">1</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-name">平均圈复杂度</div>
+                    <div class="metric-value">1.38</div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="summary">
+            <h2>📋 分析总结</h2>
+            <p>本次分析共发现 3 个代码缺陷，其中严重和高危缺陷 0 个。</p>
+            <p>建议优先修复严重和高危缺陷，以提高代码质量和安全性。</p>
+        </div>
+        
+        <div class="recommendations">
+            <h2>💡 改进建议</h2>
+            <ul>
+                <li>定期运行代码分析，建立代码质量检查流程</li>
+<li>考虑使用CI/CD集成代码分析工具</li>
+            </ul>
+        </div>
+        
+        <div class="footer">
+            <p>Generated by PyAnalyzer | 基于Python AST与Z3符号执行 | 仅供学习使用</p>
+        </div>
+    </div>
+    
+    <script>
+        // 图表数据
+        const patternData = {"potential_loop_infinite": 1, "resource_leak": 2};
+        
+        // 准备图表数据
+        const labels = Object.keys(patternData);
+        const data = Object.values(patternData);
+        const colors = [
+            '#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', 
+            '#3498db', '#9b59b6', '#1abc9c', '#34495e'
+        ];
+        
+        // 缺陷分布图表
+        const defectsChart = new Chart(
+            document.getElementById('defectsChart'),
+            {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderWidth: 1,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        );
+        
+        // 点击缺陷行显示详情
+        document.querySelectorAll('.defect-row').forEach(row => {
+            row.addEventListener('click', function() {
+                const defectId = this.dataset.defectId;
+                const modal = document.getElementById(`defect-modal-${defectId}`);
+                if (modal) {
+                    modal.style.display = 'block';
+                }
+            });
+        });
+        
+        // 关闭模态框
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.modal').style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
