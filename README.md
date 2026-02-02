@@ -1,11 +1,29 @@
-大作业题目：基于AST与符号执行的Python代码缺陷模式检测工具
+# 🔍 PyAnalyzer - Python静态代码分析工具
 
-开发一个用于分析Python开源项目的静态分析工具，能够：
-解析Python项目的抽象语法树（AST）
-识别常见的代码缺陷模式（如空指针访问、资源未释放、类型不匹配等）
-结合符号执行（Z3）进行路径约束求解，发现潜在的运行时缺陷
-生成缺陷报告，并可视化统计结果
+![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![GitHub Actions](https://github.com/zhaozhaolili/-AST-Python-/workflows/PyAnalyzer%20Code%20Analysis/badge.svg)
+![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-brightgreen)
 
+基于AST与符号执行的Python代码缺陷检测工具，《开源软件基础》课程大作业项目。
+
+## ✨ 特性
+
+- **AST解析**: 使用Python标准库`ast`和`libcst`解析代码
+- **缺陷检测**: 内置多种常见代码缺陷模式
+- **符号执行**: 集成Z3求解器进行路径约束分析
+- **智能报告**: 生成详细的HTML/JSON/控制台报告
+- **可视化**: 代码结构、调用图、缺陷分布可视化
+- **可扩展**: 支持自定义缺陷检测模式
+
+## 📦 安装
+
+### 从源码安装
+```bash
+git clone https://github.com/zhaozhaolili/-AST-python-.git
+cd pyanalyzer
+pip install -r requirements.txt
+pip install -e .
 
 pyanalyzer/
 ├── pyanalyzer/
@@ -49,30 +67,3 @@ pyanalyzer/
 ├── README.md
 ├── config.yaml
 └── .gitignore
-# 🔍 PyAnalyzer - Python静态代码分析工具
-
-基于AST与符号执行的Python代码缺陷检测工具，专为《开源软件基础》课程设计。
-
-## ✨ 特性
-
-- **AST解析**：使用Python标准库`ast`和`libcst`解析代码
-- **缺陷检测**：内置多种常见代码缺陷模式
-- **符号执行**：集成Z3求解器进行路径约束分析
-- **智能报告**：生成详细的HTML/JSON/控制台报告
-- **可视化**：代码结构、调用图、缺陷分布可视化
-- **可扩展**：支持自定义缺陷检测模式
-
-## 📦 安装
-
-### 从源码安装
-
-```bash
-# 克隆仓库
-git clone https://github.com/yourusername/pyanalyzer.git
-cd pyanalyzer
-
-# 安装依赖
-pip install -r requirements.txt
-
-# 安装PyAnalyzer
-pip install -e .
